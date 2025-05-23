@@ -16,6 +16,28 @@ actor {
   var idTarefa : Nat = 0;
   var tarefas : Buffer.Buffer<Tarefa> = Buffer.Buffer<Tarefa>(10);
 
+  // Função para contar e retornar quantidade total de tarefas em andamento no buffer
+  public func totalTarefasEmAndamento() : async Nat {
+    var total : Nat = 0;
+    for (tarefa in tarefas.vals()) {
+      if (tarefa.concluida == false) {
+        total += 1;
+      };
+    };
+    return total;
+  };
+
+  // Função para contar e retornar quantidade total de tarefas concluídas no buffer
+  public func totalTarefasConcluidas() : async Nat {
+    var total : Nat = 0;
+    for (tarefa in tarefas.vals()) {
+      if (tarefa.concluida == true) {
+        total += 1;
+      };
+    };
+    return total;
+  };
+
   // Função para adicionar itens ao buffer 'tarefas'.
   public func addTarefa(desc : Text, cat : Text, urg : Bool, con : Bool) : async () {
 
