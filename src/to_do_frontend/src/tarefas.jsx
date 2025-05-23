@@ -43,15 +43,13 @@ function tarefas() {
            caso contrário será executada a função de alteração dos dados de uma tarefa */
         if (idTarefa === null || idTarefa === "") {
             await to_do_backend.addTarefa(descricao, categoria, false, false);
-            consultarTotalTarefasEmAndamento();
-            consultarTotalTarefasConcluidas();
         } else {
             await to_do_backend.alterarTarefa(parseInt(idTarefa), categoria, descricao, urgente, false);
-            consultarTotalTarefasEmAndamento();
-            consultarTotalTarefasConcluidas();
         }
 
         consultarTarefas();
+        consultarTotalTarefasEmAndamento();
+        consultarTotalTarefasConcluidas();
 
         event.target.elements.idTarefa.value = "";
         event.target.elements.categoria.value = "";
