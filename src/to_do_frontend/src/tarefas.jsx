@@ -2,16 +2,34 @@ import { useState, useEffect } from 'react';
 import { to_do_backend } from 'declarations/to_do_backend';
 
 function tarefas() {
+    // Estados para armazenar tarefas e totais
     const [tarefas, setTarefas] = useState([]);
+    const [totalAndamento, setTotalAndamento] = useState(0);
+    const [totalConcluidas, setTotalConcluidas] = useState(0);
 
+    // useEffect executa ao carregar o componente para buscar dados do backend
     useEffect(() => {
         consultarTarefas();
+        consultarTotalTarefasEmAndamento();
+        consultarTotalTarefasConcluidas();
     }, []);
 
+    // Função que busca todas as tarefas do backend
     async function consultarTarefas() {
         setTarefas(await to_do_backend.getTarefas());
     }
 
+    // Busca total de tarefas em andamento
+    async function consultarTotalTarefasEmAndamento() {
+        setTotalAndamento(parseInt(await to_do_backend.totalTarefasEmAndamento()));
+    }
+
+    // Busca total de tarefas concluídas
+    async function consultarTotalTarefasConcluidas() {
+        setTotalConcluidas(parseInt(await to_do_backend.totalTarefasConcluidas()));
+    }
+
+    // Função chamada ao submeter o formulário
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -25,8 +43,12 @@ function tarefas() {
            caso contrário será executada a função de alteração dos dados de uma tarefa */
         if (idTarefa === null || idTarefa === "") {
             await to_do_backend.addTarefa(descricao, categoria, false, false);
+            consultarTotalTarefasEmAndamento();
+            consultarTotalTarefasConcluidas();
         } else {
             await to_do_backend.alterarTarefa(parseInt(idTarefa), categoria, descricao, urgente, false);
+            consultarTotalTarefasEmAndamento();
+            consultarTotalTarefasConcluidas();
         }
 
         consultarTarefas();
@@ -41,11 +63,15 @@ function tarefas() {
     async function excluir(id) {
         await to_do_backend.excluirTarefa(parseInt(id));
         consultarTarefas();
+        consultarTotalTarefasEmAndamento();
+        consultarTotalTarefasConcluidas();
     }
 
     async function alterar(id, categoria, descricao, urgente, concluida) {
         await to_do_backend.alterarTarefa(parseInt(id), categoria, descricao, urgente, concluida);
         consultarTarefas();
+        consultarTotalTarefasEmAndamento();
+        consultarTotalTarefasConcluidas();
     }
 
     async function editar(id, categoria, descricao, urgente) {
@@ -155,6 +181,9 @@ function tarefas() {
                     </ul>
                 </div>
             </div>
+            <div class="mt-2 text-sm text-gray-600 dark:text-gray-300 text-right font-bold">
+                TOTAL {totalAndamento}
+            </div>
 
             <br />
 
@@ -197,6 +226,9 @@ function tarefas() {
 
                     </ul>
                 </div>
+            </div>
+            <div class="mt-4 text-sm text-gray-600 dark:text-gray-300 text-right font-bold">
+                TOTAL {totalConcluidas}
             </div>
 
         </main>
